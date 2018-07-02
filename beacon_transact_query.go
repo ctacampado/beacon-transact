@@ -11,7 +11,7 @@ import (
 func getTransactions(fargs CCFuncArgs) pb.Response {
 	fmt.Println("starting getTransactions")
 
-	var qparams = &CampaignQueryParams{}
+	var qparams = &TransactionParams{}
 	err := json.Unmarshal([]byte(fargs.req.Params), qparams)
 	if err != nil {
 		return shim.Error("[getTransactions] Error unable to unmarshall msg: " + err.Error())

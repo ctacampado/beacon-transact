@@ -11,7 +11,7 @@ import (
 //CCFuncArgs common cc func args
 type CCFuncArgs struct {
 	function string
-	req      COCCMessage
+	req      Message
 	stub     shim.ChaincodeStubInterface
 }
 
@@ -20,72 +20,98 @@ type ccfunc func(args CCFuncArgs) pb.Response
 //Chaincode cc structure
 type Chaincode struct {
 	FMap map[string]ccfunc //ccfunc map
-	Msg  COCCMessage       //data
+	Msg  Message           //data
 }
 
-//COCCMessage Charity Org Chain Code Message Structure
-type COCCMessage struct {
-	CID    string `json:"CID"`    //ClientID --for websocket push (event-based messaging readyness)
-	AID    string `json:"AID"`    //ActorID (Donor ID/Charity Org ID/Auditor ID/etc.)
-	Type   string `json:"type"`   //Chaincode Function
-	Params string `json:"params"` //Function Parameters
+//Message Charity Org Chain Code Message Structure
+type Message struct {
+	CID    string `json:"CID, omitempty"` //ClientID --for websocket push (event-based messaging readyness)
+	AID    string `json:"AID"`            //ActorID (Donor ID/Charity Org ID/Auditor ID/etc.)
+	Type   string `json:"type"`           //Chaincode Function
+	Params string `json:"params"`         //Function Parameters
 }
 
 //End of Chaincode-related Structures
 //--------------------------------------------------------------------------
 //Start adding Query Parameter (Parm) Structures here
 
-//CampaignQueryParams Structure for Query Parameters
-type CampaignQueryParams struct {
-	CharityID     string `json:"CharityID,omitempty"`
-	CampaignID    string `json:"CampaignID,omitempty"`
-	Status        int    `json:"Status,omitempty"`
-	CampStartDate string `json:"CampStartDate,omitempty"`
+//TransactionParams Structure for Query Parameters
+type TransactionParams struct {
+	TxnID            string             `json:"TxnID, omitempty"`
+	TxnType          string             `json:"TxnType, omitempty"`
+	AID              string             `json:"AID, omitempty"`
+	TxnDate          string             `json:"TxnDate, omitempty"`
+	Status           string             `json:"Status, omitempty"`
+	DonationInfo     DonationInfo       `json:"DonationInfo, omitempty"`
+	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo, omitempty"`
 }
 
-//COCCQuerySelector Structure for Query Selector
-type CampaignQuerySelector struct {
-	Selector CampaignQueryParams `json:"selector"`
+//TransactionParamSelector Structure for Query Selector
+type TransactionParamSelector struct {
+	Selector TransactionParams `json:"selector"`
 }
 
 //End of Query Paramter Structures
 //--------------------------------------------------------------------------
 //Start adding Data Models here
 
-//CampStatus type for Enum
-type CampStatus int
+type DisbursementInfo struct {
+	CharityID      string `json:"CharityID"`
+	CampaignID     string `json:"CampaignID"`
+	Particular     string `json:"Particular"`
+	QtyParticular  int    `json:"QtyParticular"`
+	UnitParticular string `json:"Unitparticular"`
+	Price          string `json:"Price"`
+	Date           string `json:"Date"`
+}
 
-//Campaign Status Enum
-const (
-	PLEDGE CampStatus = 1 + iota
-	DISBURSE
-	COMPLETED
-	NEW
-	CANCELED
-)
+type DonationInfo struct {
+	WalletAddrSrc string `json:"WalletAddrSrc"`
+	WalletAddrDst string `json:"WalletAddrDst"`
+	CharityID     string `json:"CharityID"`
+	CampaignID    string `json:"CampaignID"`
+	Amount        string `json:"DonatedAmount"`
+	CoinsAPIToken string `json:"CoinsAPIToken"`
+}
 
-//CampaignInfo data model
-type CampaignInfo struct {
-	CampaignID      string     `json:"CampaignID, omitempty"`
-	CharityName     string     `json:"CharityName, omitempty"`
-	CharityID       string     `json:"CharityID"`
-	CampaignName    string     `json:"CampaignName"`
-	Description     string     `json:"Description"`
-	CampaignCaption string     `json:"CampaignCaption", omitempty`
-	CampStartDate   string     `json:"CampStartDate"`
-	CampEndDate     string     `json:"CampEndDate"`
-	CampCompDate    string     `json:"CampCompDate, omitempty"`
-	CampaignPhoto   string     `json:"CampaignPhoto, omitempty"`
-	Status          CampStatus `json:"Status"`
-	CampaignAmount  string     `json:"CampaignAmount"`
-	DonatedAmount   string     `json:"DonatedAmount, omitempty"`
-	TransAmount     string     `json:"TransAmount, omitempty"`
-	RatingFive      string     `json:"RatingFive, omitempty"`
-	RatingFour      string     `json:"RatingFour, omitempty"`
-	RatingThree     string     `json:"RatingThree, omitempty"`
-	RatingTwo       string     `json:"RatingTwo, omitempty"`
-	RatingOne       string     `json:"RatingOne, omitempty"`
+type TxInfo struct {
+	TxnID            string             `json:"TxnID,omitempty"`
+	TxnType          string             `json:"TxnType"`
+	AID              string             `json:"AID"`
+	TxnDate          string             `json:"TxnDate,omitempty"`
+	Status           string             `json:"Status,omitempty"`
+	DonationInfo     DonationInfo       `json:"DInfo, omitempty"`
+	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo, omitempty"`
 }
 
 //End of Data Models
 //--------------------------------------------------------------------------
+
+//Coins Data Models
+const COINSURL_TRANSMONEY = "https://coins.ph/api/v3/transfers/"
+const COINSURL_GETINFO = "https://coins.ph/api/v3/crypto-accounts/"
+
+type CryptoAcct struct {
+	ID              string `json:"id"`
+	Name            string `json:"name"`
+	Currency        string `json:"currency"`
+	Balance         string `json:"balance"`
+	Pending_Balance string `json:"pending_balance"`
+	Total_Received  string `json:"total_received"`
+	Default_Address string `json:"default_address"`
+	Is_Default      bool   `json:"is_default"`
+}
+type CryptoMeta struct {
+	Total_Count   int    `json:"total_count"`
+	Next_Page     string `json:"next_page"`
+	Previous_Page string `json:"previous_page"`
+}
+type CoinsGetBody struct {
+	Meta            CryptoMeta   `json:"meta"`
+	Crypto_Accounts []CryptoAcct `json:"crypto-accounts"`
+}
+type TransferBody struct {
+	Account        string  `json:"account"`
+	Amount         float64 `json:"amount"`
+	Target_Address string  `json:"target_address"`
+}
