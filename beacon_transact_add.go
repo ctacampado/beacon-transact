@@ -25,8 +25,14 @@ func handleDonateTransaction(t *TxInfo, stub shim.ChaincodeStubInterface) pb.Res
 	if err != nil {
 		return shim.Error("[addTransaction] Error unable to retrieve pbtc account: " + err.Error())
 	}
+
 	log.Printf("CALL coinsTransferDonation\n")
-	fAmt, _ := strconv.ParseFloat(t.DonationInfo.Amount, 64)
+	fAmt, err := strconv.ParseFloat(t.DonationInfo.Amount, 64)
+	if err != nil {
+		return shim.Error("[addTransaction] Error converting Amount to type float from string: " + err.Error())
+	}
+	log.Printf("famt: %f\n", fAmt)
+
 	err = coinsTransferDonation(pbtcAcct.ID, fAmt, t.DonationInfo.WalletAddrDst, t.DonationInfo.CoinsAPIToken)
 	if err != nil {
 		return shim.Error("[addTransaction] Error unable to transfer donation: " + err.Error())
@@ -44,7 +50,41 @@ func handleDonateTransaction(t *TxInfo, stub shim.ChaincodeStubInterface) pb.Res
 		return shim.Error(err.Error())
 	}
 
-	return shim.Success(bytes)
+	type CampaignParams struct {
+		CharityID     string `json:"CharityID"`
+		CampaignID    string `json:"CampaignID"`
+		DonatedAmount string `json:"DonatedAmount"`
+	}
+	cparam := CampaignParams{
+		CharityID:     t.DonationInfo.CharityID,
+		CampaignID:    t.DonationInfo.CampaignID,
+		DonatedAmount: t.DonationInfo.Amount,
+	}
+
+	bytes, err = json.Marshal(cparam)
+	if err != nil {
+		log.Printf("[handleDonationTransaction] Could not marshal campaign info object: %+v\n", err)
+		return shim.Error(err.Error())
+	}
+
+	ccmsg := Message{
+		AID:    t.AID,
+		Type:   "modifyCampaign",
+		Params: string(bytes),
+	}
+
+	args, err := json.Marshal(ccmsg)
+	if err != nil {
+		log.Printf("[handleDonationTransaction] Could not marshal campaign info object: %+v\n", err)
+		return shim.Error(err.Error())
+	}
+
+	argsarr := [][]byte{}
+	argsarr = append(argsarr, []byte("modifyCampaign"))
+	argsarr = append(argsarr, args)
+	log.Printf("argsarr: %+v\n", argsarr)
+
+	return stub.InvokeChaincode("cmpgnscc", argsarr, "campaigns")
 }
 
 func handleDisbursementTransaction(i int, t *TxInfo, stub shim.ChaincodeStubInterface) pb.Response {
@@ -78,37 +118,37 @@ func handleDisbursementTransaction(i int, t *TxInfo, stub shim.ChaincodeStubInte
 		return shim.Error(err.Error())
 	}
 
-	var argsarr [][]byte
-	argsarr[0] = args
+	argsarr := [][]byte{}
+	argsarr = append(argsarr, args)
+	log.Printf("argsarr: %+v\n", argsarr)
 
-	return stub.InvokeChaincode("beacon_cmpgns", argsarr, "campaigns")
+	return stub.InvokeChaincode("cmpgnscc", argsarr, "campaigns")
 }
 
 func addTransaction(fargs CCFuncArgs) pb.Response {
 	log.Printf("starting addTransaction\n")
-
+	log.Printf("Param: %+v\n", fargs.req.Params)
 	u := uuid.Must(uuid.NewV4())
 	var TxnID = u.String()
 
-	t := &TxInfo{
+	t := TxInfo{
 		TxnID:   TxnID,
 		TxnDate: string(time.Now().Format("2006-Jan-02")),
-		Status:  "NEW",
 	}
-
 	err := json.Unmarshal([]byte(fargs.req.Params), &t)
 	if err != nil {
 		return shim.Error("[addTransaction] Error unable to unmarshall msg: " + err.Error())
 	}
-	log.Printf("[addTransaction ] transaction info: %+v\n", t)
+	log.Printf("[addTransaction] DonationInfo: %+v\n", t.DonationInfo)
+	log.Printf("[addTransaction] transaction info: %+v\n", t)
 
 	var rsp pb.Response
 	if t.TxnType == "Donation" {
-		return handleDonateTransaction(t, fargs.stub)
+		return handleDonateTransaction(&t, fargs.stub)
 	} else if t.TxnType == "Disbursement" {
 		for i, elem := range t.DisbursementInfo {
 			log.Printf("[addTransaction ] elem info: %+v\n", elem)
-			rsp = handleDisbursementTransaction(i, t, fargs.stub)
+			rsp = handleDisbursementTransaction(i, &t, fargs.stub)
 			if nil != rsp.GetPayload() {
 				return rsp
 			}

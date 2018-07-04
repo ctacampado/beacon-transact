@@ -37,13 +37,19 @@ type Message struct {
 
 //TransactionParams Structure for Query Parameters
 type TransactionParams struct {
-	TxnID            string             `json:"TxnID, omitempty"`
-	TxnType          string             `json:"TxnType, omitempty"`
-	AID              string             `json:"AID, omitempty"`
-	TxnDate          string             `json:"TxnDate, omitempty"`
-	Status           string             `json:"Status, omitempty"`
-	DonationInfo     DonationInfo       `json:"DonationInfo, omitempty"`
-	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo, omitempty"`
+	TxnID        string `json:"TxnID,omitempty"`
+	TxnType      string `json:"TxnType,omitempty"`
+	AID          string `json:"AID,omitempty"`
+	TxnDate      string `json:"TxnDate,omitempty"`
+	DonationInfo struct {
+		WalletAddrSrc string `json:"WalletAddrSrc"`
+		WalletAddrDst string `json:"WalletAddrDst"`
+		CharityID     string `json:"CharityID"`
+		CampaignID    string `json:"CampaignID"`
+		Amount        string `json:"Amount"`
+		CoinsAPIToken string `json:"CoinsAPIToken"`
+	} `json:"DonationInfo,omitempty"`
+	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
 
 //TransactionParamSelector Structure for Query Selector
@@ -65,23 +71,22 @@ type DisbursementInfo struct {
 	Date           string `json:"Date"`
 }
 
-type DonationInfo struct {
-	WalletAddrSrc string `json:"WalletAddrSrc"`
-	WalletAddrDst string `json:"WalletAddrDst"`
-	CharityID     string `json:"CharityID"`
-	CampaignID    string `json:"CampaignID"`
-	Amount        string `json:"DonatedAmount"`
-	CoinsAPIToken string `json:"CoinsAPIToken"`
-}
-
 type TxInfo struct {
 	TxnID            string             `json:"TxnID,omitempty"`
 	TxnType          string             `json:"TxnType"`
 	AID              string             `json:"AID"`
 	TxnDate          string             `json:"TxnDate,omitempty"`
-	Status           string             `json:"Status,omitempty"`
-	DonationInfo     DonationInfo       `json:"DInfo, omitempty"`
-	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo, omitempty"`
+	DonationInfo     DonationInfo       `json:"DonationInfo,omitempty"`
+	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
+}
+
+type DonationInfo struct {
+	WalletAddrSrc string `json:"WalletAddrSrc"`
+	WalletAddrDst string `json:"WalletAddrDst"`
+	CharityID     string `json:"CharityID"`
+	CampaignID    string `json:"CampaignID"`
+	Amount        string `json:"Amount"`
+	CoinsAPIToken string `json:"CoinsAPIToken"`
 }
 
 //End of Data Models
