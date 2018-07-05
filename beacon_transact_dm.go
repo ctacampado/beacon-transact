@@ -42,12 +42,12 @@ type TransactionParams struct {
 	AID          string `json:"AID,omitempty"`
 	TxnDate      string `json:"TxnDate,omitempty"`
 	DonationInfo struct {
-		WalletAddrSrc string `json:"WalletAddrSrc"`
-		WalletAddrDst string `json:"WalletAddrDst"`
-		CharityID     string `json:"CharityID"`
-		CampaignID    string `json:"CampaignID"`
-		Amount        string `json:"Amount"`
-		CoinsAPIToken string `json:"CoinsAPIToken"`
+		WalletAddrSrc string `json:"WalletAddrSrc,omitempty"`
+		WalletAddrDst string `json:"WalletAddrDst,omitempty"`
+		CharityID     string `json:"CharityID,omitempty"`
+		CampaignID    string `json:"CampaignID,omitempty"`
+		Amount        string `json:"Amount,omitempty"`
+		CoinsAPIToken string `json:"CoinsAPIToken,omitempty"`
 	} `json:"DonationInfo,omitempty"`
 	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
@@ -76,6 +76,7 @@ type TxInfo struct {
 	TxnType          string             `json:"TxnType"`
 	AID              string             `json:"AID"`
 	TxnDate          string             `json:"TxnDate,omitempty"`
+	TxnRes           string             `json:"TxnRes,omitempty"`
 	DonationInfo     DonationInfo       `json:"DonationInfo,omitempty"`
 	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }

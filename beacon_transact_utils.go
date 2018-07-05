@@ -60,7 +60,7 @@ func coinsGetPBTCAccount(CryptoAccounts []CryptoAcct) (acct *CryptoAcct, err err
 	return nil, errors.New("[coinsGetAccountID] error No PBTC acct")
 }
 
-func coinsTransferDonation(accountid string, donatedamount float64, walletAddr string, token string) error {
+func coinsTransferDonation(accountid string, donatedamount float64, walletAddr string, token string) (string, error) {
 	transbody := TransferBody{
 		accountid,
 		donatedamount,
@@ -73,7 +73,7 @@ func coinsTransferDonation(accountid string, donatedamount float64, walletAddr s
 	req, err := http.NewRequest("POST", COINSURL_TRANSMONEY, payloadreader)
 	if err != nil {
 		log.Printf("Unmarshal fail")
-		return err
+		return "", err
 	}
 
 	req.Header.Add("authorization", strings.Join([]string{"Bearer", token}, " "))
@@ -85,19 +85,19 @@ func coinsTransferDonation(accountid string, donatedamount float64, walletAddr s
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Printf("DefaultClient fail: %+v\n", err)
-		return err
+		return "", err
 	}
 
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Printf("ReadAll fail: %+v\n", err)
-		return err
+		return "", err
 	}
 
 	log.Printf("res: %+v\n", res)
 	log.Printf("body: %+v\n", string(body))
-	return nil
+	return string(body), nil
 }
 
 func createQueryString(params *TransactionParams) (qstring string, err error) {
