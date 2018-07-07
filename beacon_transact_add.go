@@ -65,7 +65,7 @@ func handleDonateTransaction(t *TxInfo, fargs CCFuncArgs) error {
 	}
 	log.Printf("rspbytes: %+v\n", rspbytes)
 	log.Println("- end handleDonation")
-	fargs.stub.SetEvent("donate", rspbytes)
+	fargs.stub.SetEvent("donatetxn", rspbytes)
 	return nil
 }
 
@@ -90,7 +90,7 @@ func handleDisbursementTransaction(i int, t *TxInfo, fargs CCFuncArgs) error {
 	}
 	log.Printf("rspbytes: %+v\n", rspbytes)
 	log.Println("- end handleDisbursement")
-	fargs.stub.SetEvent("disburse", rspbytes)
+	fargs.stub.SetEvent("disbursetxn", rspbytes)
 	return nil
 }
 
