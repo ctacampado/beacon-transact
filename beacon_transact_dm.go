@@ -11,7 +11,7 @@ import (
 //CCFuncArgs common cc func args
 type CCFuncArgs struct {
 	function string
-	req      Message
+	msg      Message
 	stub     shim.ChaincodeStubInterface
 }
 
@@ -29,6 +29,7 @@ type Message struct {
 	AID    string `json:"AID"`            //ActorID (Donor ID/Charity Org ID/Auditor ID/etc.)
 	Type   string `json:"type"`           //Chaincode Function
 	Params string `json:"params"`         //Function Parameters
+	Data   string `json:"data,omitempty"`
 }
 
 //End of Chaincode-related Structures

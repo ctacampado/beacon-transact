@@ -11,7 +11,7 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-func handleDonateTransaction(t *TxInfo, stub shim.ChaincodeStubInterface) error {
+func handleDonateTransaction(t *TxInfo, fargs CCFuncArgs) error {
 	// Call Coins API
 	// Coins GET: retrieve account info
 	log.Printf("CALL coinsGetAccountID\n")
@@ -49,34 +49,54 @@ func handleDonateTransaction(t *TxInfo, stub shim.ChaincodeStubInterface) error 
 		return err
 	}
 
-	err = stub.PutState(t.TxnID, bytes)
+	err = fargs.stub.PutState(t.TxnID, bytes)
 	if err != nil {
 		log.Printf("[addTransaction] Error storing data in the ledger %+v\n", err)
 		return err
 	}
 
+	
+	fargs.msg.Data = string(bytes)
+	log.Printf("fargs: %+v\n", fargs.msg)
+	rspbytes, err := json.Marshal(fargs.msg)
+	if err != nil {
+		log.Printf("[handleDonation] Could not marshal fargs object: %+v\n", err)
+		return err
+	}
+	log.Printf("rspbytes: %+v\n", rspbytes)
+	log.Println("- end handleDonation")
+	fargs.stub.SetEvent("donate", rspbytes)
 	return nil
 }
 
-func handleDisbursementTransaction(i int, t *TxInfo, stub shim.ChaincodeStubInterface) error {
+func handleDisbursementTransaction(i int, t *TxInfo, fargs CCFuncArgs) error {
 	bytes, err := json.Marshal(t.DisbursementInfo[i])
 	if err != nil {
 		log.Printf("[handleDisbursementTransaction] Could not marshal campaign info object: %+v\n", err)
 		return err
 	}
 
-	err = stub.PutState(t.TxnID, bytes)
+	err = fargs.stub.PutState(t.TxnID, bytes)
 	if err != nil {
-		log.Printf("[addTransaction] Error storing data in the ledger %+v\n", err)
+		log.Printf("[handleDisbursement] Error storing data in the ledger %+v\n", err)
 		return err
 	}
-
+	fargs.msg.Data = string(bytes)
+	log.Printf("fargs: %+v\n", fargs.msg)
+	rspbytes, err := json.Marshal(fargs.msg)
+	if err != nil {
+		log.Printf("[handleDisbursement] Could not marshal fargs object: %+v\n", err)
+		return err
+	}
+	log.Printf("rspbytes: %+v\n", rspbytes)
+	log.Println("- end handleDisbursement")
+	fargs.stub.SetEvent("disburse", rspbytes)
 	return nil
 }
 
 func addTransaction(fargs CCFuncArgs) pb.Response {
 	log.Printf("starting addTransaction\n")
-	log.Printf("Param: %+v\n", fargs.req.Params)
+	log.Printf("Param: %+v\n", fargs.msg.Params)
 	u := uuid.Must(uuid.NewV4())
 	var TxnID = u.String()
 
@@ -84,7 +104,7 @@ func addTransaction(fargs CCFuncArgs) pb.Response {
 		TxnID:   TxnID,
 		TxnDate: string(time.Now().Format("2006-Jan-02")),
 	}
-	err := json.Unmarshal([]byte(fargs.req.Params), &t)
+	err := json.Unmarshal([]byte(fargs.msg.Params), &t)
 	if err != nil {
 		return shim.Error("[addTransaction] Error unable to unmarshall msg: " + err.Error())
 	}
@@ -92,14 +112,14 @@ func addTransaction(fargs CCFuncArgs) pb.Response {
 	log.Printf("[addTransaction] transaction info: %+v\n", t)
 
 	if t.TxnType == "Donation" {
-		err = handleDonateTransaction(&t, fargs.stub)
+		err = handleDonateTransaction(&t, fargs)
 		if nil != err {
 			return shim.Error("[addTransaction] error handleDonateTransaction") //change nil to appropriate response
 		}
 	} else if t.TxnType == "Disbursement" {
 		for i, elem := range t.DisbursementInfo {
 			log.Printf("[addTransaction ] elem info: %+v\n", elem)
-			err = handleDisbursementTransaction(i, &t, fargs.stub)
+			err = handleDisbursementTransaction(i, &t, fargs)
 			if nil != err {
 				return shim.Error("[addTransaction] error handleDisbursementTransaction") //change nil to appropriate response
 			}
