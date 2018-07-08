@@ -25,8 +25,9 @@ type Chaincode struct {
 
 //Message Charity Org Chain Code Message Structure
 type Message struct {
-	CID    string `json:"CID, omitempty"` //ClientID --for websocket push (event-based messaging readyness)
+	CID    string `json:"CID,omitempty"` //ClientID --for websocket push (event-based messaging readyness)
 	AID    string `json:"AID"`            //ActorID (Donor ID/Charity Org ID/Auditor ID/etc.)
+	Func   string `json:"function,omitempty"`
 	Type   string `json:"type"`           //Chaincode Function
 	Params string `json:"params"`         //Function Parameters
 	Data   string `json:"data,omitempty"`
@@ -37,19 +38,27 @@ type Message struct {
 //Start adding Query Parameter (Parm) Structures here
 
 //TransactionParams Structure for Query Parameters
+type TransactionParamsNoDonationInfo struct {
+	TxnID        string `json:"TxnID,omitempty"`
+	TxnType      string `json:"TxnType,omitempty"`
+	AID          string `json:"AID,omitempty"`
+	TxnDate      string `json:"TxnDate,omitempty"`
+}
+
 type TransactionParams struct {
 	TxnID        string `json:"TxnID,omitempty"`
 	TxnType      string `json:"TxnType,omitempty"`
 	AID          string `json:"AID,omitempty"`
 	TxnDate      string `json:"TxnDate,omitempty"`
-	DonationInfo struct {
+	DonationInfo *DonationInfo `json:"DonationInfo,omitempty"`
+/*	struct {
 		WalletAddrSrc string `json:"WalletAddrSrc,omitempty"`
 		WalletAddrDst string `json:"WalletAddrDst,omitempty"`
 		CharityID     string `json:"CharityID,omitempty"`
 		CampaignID    string `json:"CampaignID,omitempty"`
 		Amount        string `json:"Amount,omitempty"`
 		CoinsAPIToken string `json:"CoinsAPIToken,omitempty"`
-	} `json:"DonationInfo,omitempty"`
+	} `json:"DonationInfo,omitempty"`*/
 	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
 
@@ -83,12 +92,12 @@ type TxInfo struct {
 }
 
 type DonationInfo struct {
-	WalletAddrSrc string `json:"WalletAddrSrc"`
-	WalletAddrDst string `json:"WalletAddrDst"`
-	CharityID     string `json:"CharityID"`
-	CampaignID    string `json:"CampaignID"`
-	Amount        string `json:"Amount"`
-	CoinsAPIToken string `json:"CoinsAPIToken"`
+	WalletAddrSrc string `json:"WalletAddrSrc,omitempty"`
+	WalletAddrDst string `json:"WalletAddrDst,omitempty"`
+	CharityID     string `json:"CharityID,omitempty"`
+	CampaignID    string `json:"CampaignID,omitempty"`
+	Amount        string `json:"Amount,omitempty"`
+	CoinsAPIToken string `json:"CoinsAPIToken,omitempty"`
 }
 
 //End of Data Models

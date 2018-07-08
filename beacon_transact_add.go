@@ -55,7 +55,6 @@ func handleDonateTransaction(t *TxInfo, fargs CCFuncArgs) error {
 		return err
 	}
 
-	
 	fargs.msg.Data = string(bytes)
 	log.Printf("fargs: %+v\n", fargs.msg)
 	rspbytes, err := json.Marshal(fargs.msg)
