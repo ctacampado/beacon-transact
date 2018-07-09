@@ -51,14 +51,6 @@ type TransactionParams struct {
 	AID          string `json:"AID,omitempty"`
 	TxnDate      string `json:"TxnDate,omitempty"`
 	DonationInfo *DonationInfo `json:"DonationInfo,omitempty"`
-/*	struct {
-		WalletAddrSrc string `json:"WalletAddrSrc,omitempty"`
-		WalletAddrDst string `json:"WalletAddrDst,omitempty"`
-		CharityID     string `json:"CharityID,omitempty"`
-		CampaignID    string `json:"CampaignID,omitempty"`
-		Amount        string `json:"Amount,omitempty"`
-		CoinsAPIToken string `json:"CoinsAPIToken,omitempty"`
-	} `json:"DonationInfo,omitempty"`*/
 	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
 
@@ -72,13 +64,13 @@ type TransactionParamSelector struct {
 //Start adding Data Models here
 
 type DisbursementInfo struct {
-	CharityID      string `json:"CharityID"`
-	CampaignID     string `json:"CampaignID"`
-	Particular     string `json:"Particular"`
-	QtyParticular  int    `json:"QtyParticular"`
-	UnitParticular string `json:"Unitparticular"`
-	Price          string `json:"Price"`
-	Date           string `json:"Date"`
+	CharityID      string `json:"CharityID,omitempty"`
+	CampaignID     string `json:"CampaignID,omitempty"`
+	Particular     string `json:"Particular,omitempty"`
+	QtyParticular  int    `json:"QtyParticular,omitempty"`
+	UnitParticular string `json:"Unitparticular,omitempty"`
+	Price          string `json:"Price,omitempty"`
+	Date           string `json:"Date,omitempty"`
 }
 
 type TxInfo struct {
