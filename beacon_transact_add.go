@@ -110,7 +110,7 @@ func addTransaction(fargs CCFuncArgs) pb.Response {
 	log.Printf("[addTransaction] DonationInfo: %+v\n", t.DonationInfo)
 	log.Printf("[addTransaction] transaction info: %+v\n", t)
 
-	if t.DonationInfo.WalledAddrDst != "" {
+	if t.DonationInfo.WalletAddrDst != "" {
 		if t.TxnType == "Donation" {
 			err = handleDonateTransaction(&t, fargs)
 			if nil != err {
