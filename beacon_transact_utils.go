@@ -28,7 +28,7 @@ func coinsGetAccountInfo(token string) (*CoinsGetBody, error) {
 	log.Printf("Request Header = %#v \n", req.Header)
 
 	res, err := http.DefaultClient.Do(req)
-	if err != nil {
+	if err != nil || res.StatusCode != 200 {
 		log.Println("DefaultClient.Do fail")
 		return nil, err
 	}
