@@ -110,19 +110,19 @@ func addTransaction(fargs CCFuncArgs) pb.Response {
 	log.Printf("[addTransaction] DonationInfo: %+v\n", t.DonationInfo)
 	log.Printf("[addTransaction] transaction info: %+v\n", t)
 
-	if t.DonationInfo.WalletAddrDst != "" {
-		if t.TxnType == "Donation" {
+	if t.TxnType == "Donation" {
+		if t.DonationInfo.WalletAddrDst != "" {
 			err = handleDonateTransaction(&t, fargs)
 			if nil != err {
 				return shim.Error("[addTransaction] error handleDonateTransaction") //change nil to appropriate response
 			}
-		} else if t.TxnType == "Disbursement" {
-			for i, elem := range t.DisbursementInfo {
-				log.Printf("[addTransaction ] elem info: %+v\n", elem)
-				err = handleDisbursementTransaction(i, &t, fargs)
-				if nil != err {
-					return shim.Error("[addTransaction] error handleDisbursementTransaction") //change nil to appropriate response
-				}
+		}
+	} else if t.TxnType == "Disbursement" {
+		for i, elem := range t.DisbursementInfo {
+			log.Printf("[addTransaction ] elem info: %+v\n", elem)
+			err = handleDisbursementTransaction(i, &t, fargs)
+			if nil != err {
+				return shim.Error("[addTransaction] error handleDisbursementTransaction") //change nil to appropriate response
 			}
 		}
 	}
