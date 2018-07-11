@@ -46,12 +46,12 @@ type TransactionParamsNoDonationInfo struct {
 }
 
 type TransactionParams struct {
-	TxnID            string             `json:"TxnID,omitempty"`
-	TxnType          string             `json:"TxnType,omitempty"`
-	AID              string             `json:"AID,omitempty"`
-	TxnDate          string             `json:"TxnDate,omitempty"`
-	DonationInfo     *DonationInfo      `json:"DonationInfo,omitempty"`
-	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
+	TxnID            string            `json:"TxnID,omitempty"`
+	TxnType          string            `json:"TxnType,omitempty"`
+	AID              string            `json:"AID,omitempty"`
+	TxnDate          string            `json:"TxnDate,omitempty"`
+	DonationInfo     *DonationInfo     `json:"DonationInfo,omitempty"`
+	DisbursementInfo *DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
 
 //TransactionParamSelector Structure for Query Selector
