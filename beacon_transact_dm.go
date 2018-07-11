@@ -74,13 +74,13 @@ type DisbursementInfo struct {
 }
 
 type TxInfo struct {
-	TxnID            string             `json:"TxnID,omitempty"`
-	TxnType          string             `json:"TxnType"`
-	AID              string             `json:"AID"`
-	TxnDate          string             `json:"TxnDate,omitempty"`
-	TxnRes           string             `json:"TxnRes,omitempty"`
-	DonationInfo     DonationInfo       `json:"DonationInfo,omitempty"`
-	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
+	TxnID            string           `json:"TxnID,omitempty"`
+	TxnType          string           `json:"TxnType"`
+	AID              string           `json:"AID"`
+	TxnDate          string           `json:"TxnDate,omitempty"`
+	TxnRes           string           `json:"TxnRes,omitempty"`
+	DonationInfo     DonationInfo     `json:"DonationInfo,omitempty"`
+	DisbursementInfo DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
 
 type DonationInfo struct {

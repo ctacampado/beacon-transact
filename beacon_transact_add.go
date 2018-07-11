@@ -68,8 +68,8 @@ func handleDonateTransaction(t *TxInfo, fargs CCFuncArgs) error {
 	return nil
 }
 
-func handleDisbursementTransaction(i int, t *TxInfo, fargs CCFuncArgs) error {
-	bytes, err := json.Marshal(t.DisbursementInfo[i])
+func handleDisbursementTransaction(t *TxInfo, fargs CCFuncArgs) error {
+	bytes, err := json.Marshal(t)
 	if err != nil {
 		log.Printf("[handleDisbursementTransaction] Could not marshal campaign info object: %+v\n", err)
 		return err
@@ -118,12 +118,10 @@ func addTransaction(fargs CCFuncArgs) pb.Response {
 			}
 		}
 	} else if t.TxnType == "Disbursement" {
-		for i, elem := range t.DisbursementInfo {
-			log.Printf("[addTransaction ] elem info: %+v\n", elem)
-			err = handleDisbursementTransaction(i, &t, fargs)
-			if nil != err {
-				return shim.Error("[addTransaction] error handleDisbursementTransaction") //change nil to appropriate response
-			}
+		log.Printf("[addTransaction ] t.DisbursementInfo info: %+v\n", t.DisbursementInfo)
+		err = handleDisbursementTransaction(&t, fargs)
+		if nil != err {
+			return shim.Error("[addTransaction] error handleDisbursementTransaction") //change nil to appropriate response
 		}
 	}
 
