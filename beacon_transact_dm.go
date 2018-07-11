@@ -26,10 +26,10 @@ type Chaincode struct {
 //Message Charity Org Chain Code Message Structure
 type Message struct {
 	CID    string `json:"CID,omitempty"` //ClientID --for websocket push (event-based messaging readyness)
-	AID    string `json:"AID"`            //ActorID (Donor ID/Charity Org ID/Auditor ID/etc.)
+	AID    string `json:"AID"`           //ActorID (Donor ID/Charity Org ID/Auditor ID/etc.)
 	Func   string `json:"function,omitempty"`
-	Type   string `json:"type"`           //Chaincode Function
-	Params string `json:"params"`         //Function Parameters
+	Type   string `json:"type"`   //Chaincode Function
+	Params string `json:"params"` //Function Parameters
 	Data   string `json:"data,omitempty"`
 }
 
@@ -39,18 +39,18 @@ type Message struct {
 
 //TransactionParams Structure for Query Parameters
 type TransactionParamsNoDonationInfo struct {
-	TxnID        string `json:"TxnID,omitempty"`
-	TxnType      string `json:"TxnType,omitempty"`
-	AID          string `json:"AID,omitempty"`
-	TxnDate      string `json:"TxnDate,omitempty"`
+	TxnID   string `json:"TxnID,omitempty"`
+	TxnType string `json:"TxnType,omitempty"`
+	AID     string `json:"AID,omitempty"`
+	TxnDate string `json:"TxnDate,omitempty"`
 }
 
 type TransactionParams struct {
-	TxnID        string `json:"TxnID,omitempty"`
-	TxnType      string `json:"TxnType,omitempty"`
-	AID          string `json:"AID,omitempty"`
-	TxnDate      string `json:"TxnDate,omitempty"`
-	DonationInfo *DonationInfo `json:"DonationInfo,omitempty"`
+	TxnID            string             `json:"TxnID,omitempty"`
+	TxnType          string             `json:"TxnType,omitempty"`
+	AID              string             `json:"AID,omitempty"`
+	TxnDate          string             `json:"TxnDate,omitempty"`
+	DonationInfo     *DonationInfo      `json:"DonationInfo,omitempty"`
 	DisbursementInfo []DisbursementInfo `json:"DisbursementInfo,omitempty"`
 }
 
@@ -67,7 +67,7 @@ type DisbursementInfo struct {
 	CharityID      string `json:"CharityID,omitempty"`
 	CampaignID     string `json:"CampaignID,omitempty"`
 	Particular     string `json:"Particular,omitempty"`
-	QtyParticular  int    `json:"QtyParticular,omitempty"`
+	QtyParticular  string `json:"QtyParticular,omitempty"`
 	UnitParticular string `json:"Unitparticular,omitempty"`
 	Price          string `json:"Price,omitempty"`
 	Date           string `json:"Date,omitempty"`
