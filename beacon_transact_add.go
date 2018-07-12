@@ -84,6 +84,7 @@ func handleDisbursementTransaction(t *TxInfo, fargs CCFuncArgs) error {
 
 	iTotalPrice := iPrice * iQty
 	t.DisbursementInfo.TotalPrice = strconv.FormatFloat(iTotalPrice, 'f', 2, 64)
+	log.Printf("t.DisbursementInfo.TotalPrice: %+v\n", t.DisbursementInfo.TotalPrice)
 
 	bytes, err := json.Marshal(t)
 	if err != nil {
