@@ -69,6 +69,22 @@ func handleDonateTransaction(t *TxInfo, fargs CCFuncArgs) error {
 }
 
 func handleDisbursementTransaction(t *TxInfo, fargs CCFuncArgs) error {
+
+	iPrice, err := strconv.ParseFloat(t.DisbursementInfo.Price, 64)
+	if err != nil {
+		log.Printf("[handleDisbursementTransaction] Could not convert Price string to float: %+v\n", err)
+		return err
+	}
+
+	iQty, err := strconv.ParseFloat(t.DisbursementInfo.QtyParticular, 64)
+	if err != nil {
+		log.Printf("[handleDisbursementTransaction] Could not convert QTY string to float: %+v\n", err)
+		return err
+	}
+
+	iTotalPrice := iPrice * iQty
+	t.DisbursementInfo.TotalPrice = strconv.FormatFloat(iTotalPrice, 'f', 2, 64)
+
 	bytes, err := json.Marshal(t)
 	if err != nil {
 		log.Printf("[handleDisbursementTransaction] Could not marshal campaign info object: %+v\n", err)
