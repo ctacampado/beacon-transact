@@ -69,7 +69,7 @@ type DisbursementInfo struct {
 	Particular     string `json:"Particular,omitempty"`
 	QtyParticular  string `json:"QtyParticular,omitempty"`
 	UnitParticular string `json:"Unitparticular,omitempty"`
-	TotalPrice     string `json:"TotalPrice",omitempty"`
+	TotalPrice     string `json:"TotalPrice,omitempty"`
 	Price          string `json:"Price,omitempty"`
 	Date           string `json:"Date,omitempty"`
 }
